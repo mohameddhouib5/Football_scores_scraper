@@ -159,3 +159,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+ALLOWED_HOSTS = [
+    "football-scores-scraper-1.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
+ALLOWED_HOSTS = ["*"]
