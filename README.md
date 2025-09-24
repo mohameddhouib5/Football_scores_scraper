@@ -22,24 +22,6 @@ It groups matches by league, shows kickoff time, team logos, scores, broadcastin
 - **Frontend:** HTML, CSS, Vanilla JS
 - **Scraping:** `requests` + `BeautifulSoup`
 
----
-
-## 📂 Project Structure
-yallakora_scraper/
-│── matches/
-│ ├── templates/matches/home.html # Main UI
-│ ├── views.py # Core logic (normalization, grouping)
-│ ├── scraper.py # Scraping functions
-│ ├── urls.py # App routes
-│ └── ...
-│
-├── yallakora_scraper/
-│ ├── settings.py
-│ ├── urls.py
-│ └── ...
-│
-├── manage.py
-└── README.md
 
 ---
 
