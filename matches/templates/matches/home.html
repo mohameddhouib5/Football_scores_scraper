@@ -1,0 +1,559 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yallakora - Live Football Scores</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+        line-height: 1.6;
+        color: #2c3e50;
+        background-color: #fafbfc;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      header {
+        background: #fff;
+        border-bottom: 1px solid #e1e8ed;
+        padding: 16px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo img {
+        width: 400px;
+        height: 400px;
+        object-fit: contain;
+        position: fixed;
+        margin-top: -200px;
+      }
+      .date-controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #f8f9fa;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid #e1e8ed;
+      }
+      .date-input {
+        border: 1px solid #d1d9e0;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 14px;
+        background: #fff;
+        min-width: 140px;
+      }
+      .date-input:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      }
+      .btn {
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .btn-primary {
+        background: #3498db;
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #2980b9;
+      }
+      .btn-secondary {
+        background: #fff;
+        color: #2c3e50;
+        border: 1px solid #d1d9e0;
+      }
+      .btn-secondary:hover {
+        background: #f8f9fa;
+        border-color: #bcc8d4;
+      }
+      main {
+        padding: 32px 0;
+      }
+      .error-message {
+        background: #fee;
+        border: 1px solid #fcc;
+        color: #c33;
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+      .league-section {
+        margin-bottom: 40px;
+      }
+      .league-header {
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #27ae60;
+      }
+      .league-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 4px;
+      }
+      .league-meta {
+        font-size: 14px;
+        color: #7f8c8d;
+      }
+      .matches-grid {
+        display: grid;
+        gap: 16px;
+      }
+      .match-card {
+        background: #fff;
+        border: 1px solid #e1e8ed;
+        border-radius: 8px;
+        padding: 20px;
+        transition: box-shadow 0.15s ease;
+      }
+      .match-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .match-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .match-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .status-live {
+        color: #e74c3c;
+      }
+      .status-finished {
+        color: #27ae60;
+      }
+      .status-upcoming {
+        color: #3498db;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: #e74c3c;
+        border-radius: 50%;
+        animation: blink 1.5s infinite;
+      }
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0.3;
+        }
+      }
+      .match-time {
+        font-size: 13px;
+        color: #7f8c8d;
+        font-weight: 500;
+      }
+      .match-teams {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .team {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+      }
+      .team-away {
+        flex-direction: row-reverse;
+        text-align: right;
+      }
+      .team-logo {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+        border-radius: 4px;
+      }
+      .team-name {
+        font-size: 15px;
+        font-weight: 500;
+        color: #2c3e50;
+      }
+      .score-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 18px;
+        font-weight: 700;
+        min-width: 60px;
+        justify-content: center;
+      }
+      .score-live {
+        color: #e74c3c;
+      }
+      .score-finished {
+        color: #2c3e50;
+      }
+      .score-upcoming {
+        color: #7f8c8d;
+        font-weight: 500;
+      }
+      .match-info {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f1f3f4;
+        font-size: 12px;
+        color: #7f8c8d;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: #7f8c8d;
+      }
+      .empty-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.6;
+      }
+      .empty-title {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #2c3e50;
+      }
+      .empty-text {
+        font-size: 14px;
+      }
+      footer {
+        border-top: 1px solid #e1e8ed;
+        padding: 24px 0;
+        margin-top: 48px;
+      }
+      .footer-content {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 14px;
+      }
+      @media (max-width: 768px) {
+        .container {
+          padding: 0 16px;
+        }
+        .header-content {
+          flex-direction: column;
+          gap: 16px;
+        }
+        .date-controls {
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .match-teams {
+          flex-direction: column;
+          gap: 12px;
+        }
+        .team {
+          justify-content: center;
+        }
+        .team-away {
+          flex-direction: row;
+        }
+        .score-container {
+          order: -1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="#" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Yallakora Logo" />
+          </a>
+
+          <form method="get" class="date-controls">
+            <input
+              type="text"
+              id="date"
+              name="date"
+              value="{{ date }}"
+              placeholder="MM/DD/YYYY"
+              class="date-input"
+            />
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button
+              type="button"
+              onclick="setToday()"
+              class="btn btn-secondary"
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onclick="changeDate(-1)"
+              class="btn btn-secondary"
+            >
+              ← Prev
+            </button>
+            <button
+              type="button"
+              onclick="changeDate(1)"
+              class="btn btn-secondary"
+            >
+              Next →
+            </button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <main
+      style="
+        text-align: center;
+        padding: 40px 10px;
+        background: linear-gradient(90deg, #05314e, #0c2b19);
+        color: white;
+      "
+    >
+      <h1
+        style="
+          font-size: 3rem;
+          font-weight: 700;
+          line-height: 1.2;
+          margin-bottom: 2px;
+        "
+      >
+        الموقع العربي الأول لمتابعة المباريات
+      </h1>
+      <p
+        style="
+          font-size: 1.2rem;
+          font-weight: 500;
+          opacity: 0.85;
+          margin-bottom: 1px;
+        "
+      >
+        كل ما تحتاجه من نتائج مباشرة في مكان واحد
+      </p>
+    </main>
+
+    <main>
+      <div class="container">
+     {% if matches_by_league %}
+  {% for league, league_matches in matches_by_league.items %}
+    <section class="league-section">
+      <div class="league-header">
+        <h2 class="league-title">{{ league }}</h2>
+        <div class="league-meta">
+          {{ league_matches|length }} match{{ league_matches|length|pluralize:"es" }}
+        </div>
+      </div>
+
+      <div class="matches-grid">
+        {% for match in league_matches %}
+          <article class="match-card">
+            <div class="match-header">
+              <div class="match-status {{ match.status_class }}">
+                {{ match.status_display }}
+              </div>
+              <div class="match-time">{{ match.kickoff_time }}</div>
+            </div>
+
+            <div class="match-teams">
+              <div class="team">
+                <img src="{{ match.home_logo_url }}" alt="{{ match.home_name }}" class="team-logo" />
+                <div class="team-name">{{ match.home_name }}</div>
+              </div>
+
+              <div class="score-container {{ match.score_class }}">
+                <span>{{ match.home_score }}</span>
+                <span style="opacity:0.5">-</span>
+                <span>{{ match.away_score }}</span>
+              </div>
+
+              <div class="team team-away">
+                <img src="{{ match.away_logo_url }}" alt="{{ match.away_name }}" class="team-logo" />
+                <div class="team-name">{{ match.away_name }}</div>
+              </div>
+            </div>
+
+            {% if match.channel %}
+              <div class="match-info">Broadcasting on {{ match.channel }}</div>
+            {% endif %}
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">
+    <div class="empty-title">No matches found</div>
+    <div class="empty-text">
+      Try selecting a different date to see available matches
+    </div>
+  </div>
+{% endif %}
+
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+         Live football scores scraped from Yallakora
+         made by Mohamed Dhouib 2025
+        </div>
+      </div>
+    </footer>
+
+ <script>
+  function parseDate(dateStr) {
+    if (!dateStr) {
+      console.log("No dateStr provided, using current date");
+      return new Date();
+    }
+    const parts = dateStr.split("/");
+    if (parts.length !== 3) {
+      console.log("Invalid dateStr format:", dateStr);
+      return new Date();
+    }
+    return new Date(parts[2], parts[0] - 1, parts[1]);
+  }
+
+  function parseTime(timeStr) {
+    if (!timeStr) {
+      console.log("No timeStr provided");
+      return { hours: 0, minutes: 0 };
+    }
+    const match = timeStr.match(/(\d+):(\d+)/);
+    if (!match) {
+      console.log("Invalid timeStr format:", timeStr);
+      return { hours: 0, minutes: 0 };
+    }
+    return { hours: parseInt(match[1]), minutes: parseInt(match[2]) };
+  }
+
+  function updateMatchStatuses() {
+    const todayStr = new URLSearchParams(window.location.search).get("date");
+    const today = parseDate(todayStr);
+    const now = new Date();
+    console.log("Current client time:", now);
+    console.log("Selected date:", todayStr, today);
+
+    document.querySelectorAll(".match-card").forEach((card, index) => {
+      const kickoff = card.querySelector(".match-time")?.textContent.trim() || "";
+      let homeScore = card.querySelector(".score-container span:first-child")?.textContent.trim() || "";
+      let awayScore = card.querySelector(".score-container span:last-child")?.textContent.trim() || "";
+      const statusEl = card.querySelector(".match-status");
+      const scoreEl = card.querySelector(".score-container");
+
+      // Split combined score if awayScore is empty
+      if (homeScore && !awayScore) {
+        const scoreMatch = homeScore.match(/(\d+)\s*-\s*(\d+)/);
+        if (scoreMatch) {
+          homeScore = scoreMatch[1];
+          awayScore = scoreMatch[2];
+          console.log(`Match ${index + 1}: Split score - homeScore=${homeScore}, awayScore=${awayScore}`);
+        }
+      }
+
+      console.log(`Match ${index + 1}: kickoff=${kickoff}, homeScore=${homeScore}, awayScore=${awayScore}`);
+
+      // Parse kickoff time
+      const { hours, minutes } = parseTime(kickoff);
+      const matchDateTime = new Date(today);
+      matchDateTime.setHours(hours, minutes, 0, 0);
+      console.log(`Match ${index + 1}: matchDateTime=${matchDateTime}`);
+
+      const hasScore = homeScore !== "" && awayScore !== "" && homeScore !== "-" && awayScore !== "-";
+      let statusText = statusEl?.textContent.trim() || "Upcoming";
+      let statusClass = statusEl?.className || "match-status status-upcoming";
+
+      console.log(`Match ${index + 1}: initial status=${statusText}, hasScore=${hasScore}`);
+
+      // Override status if backend data is ambiguous
+      if (!statusText || statusText === "Upcoming") {
+        if (hasScore && matchDateTime < now - 90 * 60 * 1000) {
+          statusText = "Full Time";
+          statusClass = "match-status status-finished";
+        } else if (hasScore && matchDateTime <= now && matchDateTime > now - 120 * 60 * 1000) {
+          statusText = "Live";
+          statusClass = "match-status status-live";
+        } else if (matchDateTime > now) {
+          statusText = "Upcoming";
+          statusClass = "match-status status-upcoming";
+        }
+      }
+
+      console.log(`Match ${index + 1}: final status=${statusText}, class=${statusClass}`);
+
+      // Update status element
+      if (statusEl) {
+        statusEl.textContent = statusText;
+        statusEl.className = statusClass;
+        if (statusText === "Live") {
+          statusEl.innerHTML = `Live <span class="live-dot"></span>`;
+        }
+      }
+
+      // Update score container class
+      if (scoreEl) {
+        scoreEl.className = "score-container " + statusClass.replace("match-status status-", "score-");
+      }
+    });
+  }
+
+  function formatDate(date) {
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const yyyy = date.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
+  }
+
+  function setToday() {
+    document.getElementById("date").value = formatDate(new Date());
+  }
+
+  function changeDate(offset) {
+    const input = document.getElementById("date");
+    let current = input.value ? parseDate(input.value) : new Date();
+    if (!isNaN(current)) {
+      current.setDate(current.getDate() + offset);
+      input.value = formatDate(current);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", updateMatchStatuses);
+</script>
+  </body>
+</html>
