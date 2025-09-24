@@ -1,7 +1,6 @@
-# ⚽  Live Football Matches Scores Scraping
-<p align="center">
-  <img src="matches/static/images/logo.png" alt="Yallakora Scraper Logo" width="120"/>
-</p>
+#   Live Football Matches Scores Scraping
+
+![Scraper Logo](static/images/logo.png)
 
 A Django-based web application that scrapes football match data from **Yallakora** and displays it in a clean, structured interface.  
 It groups matches by league, shows kickoff time, team logos, scores, broadcasting channel, and automatically highlights the match status (Live, Finished, or Upcoming).
@@ -77,9 +76,7 @@ python manage.py runserver
 Then open: 👉 ```http://127.0.0.1:8000/```
 
 📸 Screenshots
-<p align="center">
-  <img src="static/images/screenshot.png" alt="Yallakora Scraper Logo" width="150"/>
-</p>
+![Scraper Logo](static/images/screenshot.png)
 
 🤝 Contribution
 
